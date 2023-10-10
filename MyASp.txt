@@ -1,0 +1,64 @@
+Imports System.Data.SqlClient
+Imports System.Data
+Partial Class _Default
+    Inherits System.Web.UI.Page
+    Dim con As New SqlConnection("Data Source=.\SQLEXPRESS;AttachDbFilename=C:\Users\Pratham23\OneDrive\Documents\Visual Studio 2008\WebSites\WebSite_1\App_Data\Database1.mdf;Integrated Security=True;User Instance=True")
+    Protected Sub Button1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button1.Click
+        con.Open()
+        Dim stmt As String = "insert into Table1(id,name,email,password)values('" & TextBox1.Text & "','" & TextBox2.Text & "','" & TextBox3.Text & "','" & TextBox4.Text & "')"
+        Dim cmd As New SqlCommand(stmt, con)
+        cmd.ExecuteNonQuery()
+        MsgBox("Inserted")
+        con.Close()
+        bind()
+    End Sub
+
+    Protected Sub Button2_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button2.Click
+        con.Open()
+        Dim stmt As String = "update Table1 set name='" & TextBox2.Text & "',email='" & TextBox3.Text & "',password='" & TextBox4.Text & "'where id='" & TextBox1.Text & "'"
+        Dim cmd As New SqlCommand(stmt, con)
+        cmd.ExecuteNonQuery()
+        MsgBox("Updated")
+        con.Close()
+        bind()
+    End Sub
+
+    Protected Sub Button3_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button3.Click
+        con.Open()
+        Dim stmt As String = "delete from Table1 where id='" & TextBox1.Text & "'"
+        Dim cmd As New SqlCommand(stmt, con)
+        cmd.ExecuteNonQuery()
+        MsgBox("deleted")
+        con.Close()
+        bind()
+    End Sub
+
+    Protected Sub Button4_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button4.Click
+        con.Open()
+        Dim stmt As String = "select * from Table1 where id='" & TextBox1.Text & "'"
+        Dim cmd As New SqlCommand(stmt, con)
+        Dim dr As SqlDataReader
+        dr = cmd.ExecuteReader
+
+
+        If dr.Read Then
+            TextBox1.Text = dr.GetValue(0)
+            TextBox2.Text = dr.GetValue(1)
+            TextBox3.Text = dr.GetValue(2)
+            TextBox4.Text = dr.GetValue(3)
+        Else
+            MsgBox("No record found")
+        End If
+        con.Close()
+    End Sub
+
+    Public Sub bind()
+        Dim stmt As String = "select * from Table1"
+        Dim cmd As New SqlCommand(stmt, con)
+        Dim da As New SqlDataAdapter(cmd)
+        Dim dt As New DataTable
+        da.Fill(dt)
+        GridView1.DataSource = dt
+        GridView1.DataBind()
+    End Sub
+End Class
